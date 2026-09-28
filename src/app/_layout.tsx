@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 
 export default function Layout() {
   return (
-    //Stack gestion de las rutas, contiene todas las pantallas de la plicacion
     <Stack
       screenOptions={{
         headerStyle: {
@@ -17,7 +16,6 @@ export default function Layout() {
         },
       }}
     >
-      //Stack.Screen,registra la pantalla en el navegador
       <Stack.Screen
         name="index"
         options={{ title: "Inicio" }}
@@ -41,6 +39,11 @@ export default function Layout() {
       <Stack.Screen
         name="contacto"
         options={{ title: "Contacto" }}
+      />
+
+      <Stack.Screen
+        name="registros"
+        options={{ title: "Registros de viajeros" }}
       />
     </Stack>
   );

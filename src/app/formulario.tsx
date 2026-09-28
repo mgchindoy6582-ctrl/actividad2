@@ -1,86 +1,300 @@
-import { useState } from "react";
+
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
-  Pressable,
-  StyleSheet,
   View,
 } from "react-native";
 
-export default function Formulario() {
+import { supabase } from "../lib/supabase";
+
+export default function FormularioViaje() {
   const router = useRouter();
 
+  // Estados del formulario
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [destino, setDestino] = useState("");
+  const [tipoViaje, setTipoViaje] = useState("");
 
-  const enviar = () => {
-    if (!nombre || !correo || !telefono || !ciudad) {
-      alert("Todos los campos son obligatorios");
+  const [guardando, setGuardando] = useState(false);
+
+  // Validar correo electrónico
+  const validarCorreo = (email: string) => {
+    const expresion = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return expresion.test(email);
+  };
+
+  // Guardar datos en Supabase
+  const guardar = async () => {
+    if (
+      !nombre.trim() ||
+      !correo.trim() ||
+      !telefono.trim() ||
+      !ciudad.trim() ||
+      !destino.trim() ||
+      !tipoViaje
+    ) {
+      Alert.alert("Atención", "Todos los campos son obligatorios");
       return;
     }
 
-    router.push({
-      pathname: "/resultado",
-      params: {
-        nombre,
-        correo,
-        telefono,
-        ciudad,
-      },
-    });
+    if (!validarCorreo(correo)) {
+      Alert.alert("Error", "Ingrese un correo electrónico válido");
+      return;
+    }
+
+    if (!/^\d+$/.test(telefono.trim())) {
+      Alert.alert("Error", "El teléfono debe contener solamente números");
+      return;
+    }
+
+    if (telefono.trim().length < 7) {
+      Alert.alert(
+        "Error",
+        "Ingrese un número de teléfono válido (mínimo 7 dígitos)"
+      );
+      return;
+    }
+
+    try {
+      setGuardando(true);
+// aqui esta la parte del insert
+      const { data, error } = await supabase
+        .from("clientes_agencia")
+        .insert([
+          {
+            nombre: nombre.trim(),
+            correo: correo.trim(),
+            telefono: telefono.trim(),
+            ciudad: ciudad.trim(),
+            destino_favorito: destino.trim(),
+            tipo_viaje: tipoViaje, // este fu el cambio
+          },
+        ])
+        .select();
+
+      if (error) {
+        console.error("ERROR SUPABASE:", error);
+        Alert.alert("Error al guardar", error.message);
+        return;
+      }
+
+      const registro = data?.[0];
+
+      if (!registro) {
+        Alert.alert(
+          "Error",
+          "No fue posible recuperar la información guardada"
+        );
+        return;
+      }
+
+      // Enviar los datos a resultado.tsx
+      router.push({
+        pathname: "/resultado",
+        params: {
+          id: String(registro.id),
+          nombre: registro.nombre,
+          correo: registro.correo,
+          telefono: registro.telefono,
+          ciudad: registro.ciudad,
+          destino: registro.destino_favorito,
+          tipo_viaje: registro.tipo_viaje,
+        },
+      });
+
+      // Limpiar formulario
+      setNombre("");
+      setCorreo("");
+      setTelefono("");
+      setCiudad("");
+      setDestino("");
+      setTipoViaje("");
+    } catch (error) {
+      console.error("ERROR INESPERADO:", error);
+      Alert.alert(
+        "Error",
+        "No fue posible registrar tu solicitud de viaje"
+      );
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.titulo}>Registro de usuario</Text>
-      <Text style={styles.subtitulo}>
-        Completa la información para continuar.
-      </Text>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* ENCABEZADO */}
+      <View style={styles.encabezado}>
+        <View style={styles.iconoContainer}>
+          <Text style={styles.iconoViaje}>✈️</Text>
+        </View>
 
+        <Text style={styles.titulo}>VIAJES.COM</Text>
+
+        <Text style={styles.subtitulo}>
+          Planifica tus próximas vacaciones con los mejores
+          planes y tarifas.
+        </Text>
+      </View>
+
+      {/* FORMULARIO */}
       <View style={styles.card}>
-        <Text style={styles.label}>Nombre</Text>
+        <Text style={styles.cardTitulo}>Cotiza tu experiencia</Text>
+
+        <Text style={styles.cardDescripcion}>
+          Déjanos tus datos de contacto y el lugar al que
+          sueñas viajar.
+        </Text>
+
+        {/* NOMBRE */}
+        <Text style={styles.label}>Nombre completo</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ingrese su nombre"
+          placeholder="Ej: Maria Chindoy"
+          placeholderTextColor="#8C9CAE"
           value={nombre}
           onChangeText={setNombre}
+          autoCapitalize="words"
         />
 
-        <Text style={styles.label}>Correo</Text>
+        {/* CORREO */}
+        <Text style={styles.label}>Correo electrónico</Text>
         <TextInput
           style={styles.input}
-          placeholder="correo@dominio.com"
-          keyboardType="email-address"
-          autoCapitalize="none"
+          placeholder="Ej: maria@correo.com"
+          placeholderTextColor="#8C9CAE"
           value={correo}
           onChangeText={setCorreo}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
-        <Text style={styles.label}>Teléfono</Text>
+        {/* TELÉFONO */}
+        <Text style={styles.label}>Teléfono / WhatsApp</Text>
         <TextInput
           style={styles.input}
-          placeholder="3001234567"
-          keyboardType="numeric"
+          placeholder="Ej: 3001234567"
+          placeholderTextColor="#8C9CAE"
           value={telefono}
           onChangeText={setTelefono}
+          keyboardType="phone-pad"
+          maxLength={15}
         />
 
-        <Text style={styles.label}>Ciudad</Text>
+        {/* CIUDAD DE ORIGEN */}
+        <Text style={styles.label}>Ciudad de origen</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ej: Pasto"
+          placeholder="Ej: Pasto, Bogotá, Cali..."
+          placeholderTextColor="#8C9CAE"
           value={ciudad}
           onChangeText={setCiudad}
+          autoCapitalize="words"
         />
 
-        <Pressable style={styles.boton} onPress={enviar}>
-          <Text style={styles.botonTexto}>Enviar información</Text>
+        {/* DESTINO */}
+        <Text style={styles.label}>Destino deseado</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ej: San Andrés, Cancún, Roma..."
+          placeholderTextColor="#8C9CAE"
+          value={destino}
+          onChangeText={setDestino}
+          autoCapitalize="words"
+        />
+
+        {/* TIPO DE VIAJE */}
+        <Text style={styles.label}>Tipo de viaje</Text>
+
+        <View style={styles.opciones}>
+          {[
+            "Aventura",
+            "Playa",
+            "Cultural",
+            "Ecoturismo",
+            "Otro",
+          ].map((tipo) => (
+            <Pressable
+              key={tipo}
+              style={[
+                styles.opcion,
+                tipoViaje === tipo && styles.opcionSeleccionada,
+              ]}
+              onPress={() => setTipoViaje(tipo)}
+            >
+              <Text
+                style={[
+                  styles.opcionTexto,
+                  tipoViaje === tipo &&
+                    styles.opcionTextoSeleccionada,
+                ]}
+              >
+                {tipoViaje === tipo ? "✓ " : ""}
+                {tipo}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* BOTÓN REGISTRAR */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.boton,
+            pressed && styles.botonPresionado,
+            guardando && styles.botonDesactivado,
+          ]}
+          onPress={guardar}
+          disabled={guardando}
+        >
+          {guardando ? (
+            <View style={styles.cargandoContainer}>
+              <ActivityIndicator color="#FFFFFF" />
+              <Text style={styles.botonTexto}>
+                Registrando viaje...
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.botonTexto}>
+              Solicitar cotización
+            </Text>
+          )}
         </Pressable>
       </View>
+
+      {/* INFORMACIÓN */}
+      <View style={styles.infoBox}>
+        <View style={styles.infoIcono}>
+          <Text style={styles.infoEmoji}>🌍</Text>
+        </View>
+
+        <View style={styles.infoContenido}>
+          <Text style={styles.infoTitulo}>
+            Asesoría personalizada
+          </Text>
+          <Text style={styles.infoTexto}>
+            Un asesor de viajes se comunicará contigo vía
+            WhatsApp o correo para presentarte paquetes a
+            tu medida.
+          </Text>
+        </View>
+      </View>
+
+      {/* PIE */}
+      <Text style={styles.footer}>
+        VIAJES.COM · Tu aventura comienza aquí
+      </Text>
     </ScrollView>
   );
 }
@@ -88,163 +302,198 @@ export default function Formulario() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#FFF7FA",
+    backgroundColor: "#F0F5FA",
     padding: 20,
+  },
+
+  encabezado: {
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 25,
+  },
+
+  iconoContainer: {
+    width: 75,
+    height: 75,
+    borderRadius: 38,
+    backgroundColor: "#DCE9F6",
     justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  iconoViaje: {
+    fontSize: 38,
   },
 
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#6C4051",
+    color: "#163A5F",
     textAlign: "center",
   },
 
   subtitulo: {
-    color: "#8A727C",
+    fontSize: 14,
+    color: "#526B84",
     textAlign: "center",
+    marginTop: 7,
+    lineHeight: 21,
+    paddingHorizontal: 20,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#D2E2F0",
+    elevation: 4,
+    shadowColor: "#163A5F",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+  },
+
+  cardTitulo: {
+    fontSize: 19,
+    fontWeight: "bold",
+    color: "#163A5F",
+    marginBottom: 4,
+  },
+
+  cardDescripcion: {
+    color: "#627B94",
+    fontSize: 13,
+    lineHeight: 19,
     marginBottom: 20,
   },
 
-  card: {
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#F2D5E0",
-    elevation: 3,
-  },
-
   label: {
-    color: "#684552",
+    color: "#1E4773",
     fontWeight: "600",
-    marginBottom: 6,
+    fontSize: 14,
+    marginBottom: 7,
   },
 
   input: {
-    backgroundColor: "#FFF9FB",
+    backgroundColor: "#F8FAFD",
     borderWidth: 1,
-    borderColor: "#EBC8D6",
-    borderRadius: 13,
-    padding: 12,
-    marginBottom: 14,
+    borderColor: "#CBDCEB",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    marginBottom: 17,
+    color: "#163A5F",
+    fontSize: 15,
   },
 
-  boton: {
-    backgroundColor: "#C96A8B",
-    paddingVertical: 14,
-    borderRadius: 13,
-    alignItems: "center",
-    marginTop: 4,
-  },
-
-  botonTexto: {
-    color: "white",
-    fontWeight: "bold",
-  },
-});
-
-Prueba: Deje algún campo vacío y presione el botón. La aplicación debe impedir el envío. Luego complete todos los campos y compruebe que se abre la pantalla de resultados.
-
-PARTE 5. Mostrar los datos enviados
-Paso 5.1. Crear app/resultado.tsx
-import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-} from "react-native";
-
-export default function Resultado() {
-  const router = useRouter();
-  const { nombre, correo, telefono, ciudad } =
-    useLocalSearchParams();
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Información registrada</Text>
-      <Text style={styles.subtitulo}>
-        Datos recibidos desde el formulario.
-      </Text>
-
-      <View style={styles.card}>
-        <Text style={styles.label}>Nombre</Text>
-        <Text style={styles.valor}>{nombre}</Text>
-
-        <Text style={styles.label}>Correo</Text>
-        <Text style={styles.valor}>{correo}</Text>
-
-        <Text style={styles.label}>Teléfono</Text>
-        <Text style={styles.valor}>{telefono}</Text>
-
-        <Text style={styles.label}>Ciudad</Text>
-        <Text style={styles.valor}>{ciudad}</Text>
-      </View>
-
-      <Pressable
-        style={styles.boton}
-        onPress={() => router.replace("/")}
-      >
-        <Text style={styles.botonTexto}>Volver al inicio</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF7FA",
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  titulo: {
-    fontSize: 27,
-    fontWeight: "bold",
-    color: "#6C4051",
-    textAlign: "center",
-  },
-
-  subtitulo: {
-    color: "#8A727C",
-    textAlign: "center",
-    marginBottom: 22,
-  },
-
-  card: {
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#F2D5E0",
+  opciones: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 9,
     marginBottom: 18,
-    elevation: 3,
   },
 
-  label: {
-    color: "#A06C80",
-    fontSize: 13,
-    marginTop: 8,
+  opcion: {
+    backgroundColor: "#F8FAFD",
+    borderWidth: 1,
+    borderColor: "#CBDCEB",
+    borderRadius: 12,
+    paddingVertical: 11,
+    paddingHorizontal: 14,
   },
 
-  valor: {
-    color: "#563C46",
-    fontSize: 17,
+  opcionSeleccionada: {
+    backgroundColor: "#DCE9F6",
+    borderColor: "#0284C7",
+  },
+
+  opcionTexto: {
+    color: "#526B84",
+    fontSize: 14,
     fontWeight: "600",
-    marginBottom: 8,
+  },
+
+  opcionTextoSeleccionada: {
+    color: "#163A5F",
   },
 
   boton: {
-    backgroundColor: "#C96A8B",
-    padding: 14,
-    borderRadius: 13,
+    backgroundColor: "#0284C7",
+    paddingVertical: 15,
+    borderRadius: 15,
     alignItems: "center",
+    marginTop: 6,
+    elevation: 2,
+  },
+
+  botonPresionado: {
+    opacity: 0.85,
+    backgroundColor: "#0369A1",
+  },
+
+  botonDesactivado: {
+    opacity: 0.65,
   },
 
   botonTexto: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: 15,
+  },
+
+  cargandoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  infoBox: {
+    backgroundColor: "#E2EEF9",
+    padding: 17,
+    borderRadius: 20,
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  infoIcono: {
+    width: 46,
+    height: 46,
+    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 13,
+  },
+
+  infoEmoji: {
+    fontSize: 23,
+  },
+
+  infoContenido: {
+    flex: 1,
+  },
+
+  infoTitulo: {
+    color: "#163A5F",
+    fontWeight: "bold",
+    fontSize: 15,
+    marginBottom: 3,
+  },
+
+  infoTexto: {
+    color: "#47617B",
+    fontSize: 13,
+    lineHeight: 18,
+  },
+
+  footer: {
+    textAlign: "center",
+    color: "#839BB3",
+    fontSize: 12,
+    marginTop: 24,
+    marginBottom: 10,
   },
 });

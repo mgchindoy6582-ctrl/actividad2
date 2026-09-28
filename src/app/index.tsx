@@ -1,410 +1,372 @@
-import { useState } from 'react';
 
+import { useRouter } from "expo-router";
 import {
-  ActivityIndicator,
   Image,
-  KeyboardAvoidingView, Modal, Platform,
-  Pressable, ScrollView, StyleSheet,
-  Switch,
+  Pressable,
+  ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
 
-import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-
-export default function HomeScreen() {
-
-  //estados
-  const [nombre, setNombre]= useState('');
-  const [destino, setDestino]= useState('');
-  const [tipoTour, setTour]= useState('');
-  const [cantidadViajeros, setCantidadViajeros]= useState('');
-  const [fecha, setFecha]= useState('');
-  const [incluirSeguro, setIncluirSeguro]= useState(false);
-  const [metodoPago, setMetodoPago]= useState('');
-  const [resultado, setResultado]= useState('');
-  const [total, setTotal]= useState('');
-  const [procesando, setProcesando]= useState(false);
-  const [modalVisible, setModalVisible]= useState(false);
-
-  //funcion de botones
-  const realizarCompra = () => {
-
-    //validamos que campos tengan informacion
-    if(
-      nombre.trim() === '' ||
-      destino.trim() === '' ||
-      tipoTour.trim() === '' ||
-      cantidadViajeros.trim() === '' ||
-      fecha.trim() === '' ||
-      metodoPago.trim() === ''
-    ){
-      setResultado('Por favor completa todos los campos');
-      setModalVisible(true);
-    return;
-  }
-
-   //mostrar indicador de carga
-  setProcesando(true);
-  setResultado('');
-
-  //simulacion de que el pedido se este procesando
- setTimeout (()=>{
-  
-  setProcesando(false);
-
-      setResultado(
-       `Cliente: ${nombre}
-        Destino: ${destino}
-        Tour: ${tipoTour}
-        Cantidad: ${cantidadViajeros}
-        Fecha:${fecha}
-        Seguro: ${incluirSeguro ? 'Si' : 'No'}
-        MetodoPago: ${metodoPago}
-        Resultado: ${resultado}
-        Total:${total}`
-        
-        );
-
-        //abrimos el modal
-        setModalVisible(true);    
-    }, 1200);
-  };
-
-    return (
-    <KeyboardAvoidingView
-      style={styles.pantalla}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+function BotonHorizontal({
+  icono,
+  titulo,
+  colorFondo,
+  onPress,
+}: {
+  icono: string;
+  titulo: string;
+  colorFondo: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.botonColumna,
+        { backgroundColor: colorFondo },
+        pressed && styles.botonPresionado,
+      ]}
+      onPress={onPress}
     >
-      <StatusBar style="dark" />
-
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contenido}>
-
-        {/* ENCABEZADO ADAPTADO */}
-        <View style={styles.header}>
-          <Text style={styles.logo}>🛫🚌</Text>
-          <Text style={styles.titulo}>Vuela.com</Text>
-          <Text style={styles.subtitulo}>Agencia de turismo</Text>
-        </View>
-
-        {/* IMAGEN DE VIAJE */}
-        <Image
-          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrybtgTF561wAwJsipPxqrpg2iZxxNkaLsievhxa_hhdp5oZgaVHQ3dQU&s=10' }}
-          style={styles.imagenPrincipal}
-        ></Image>
-
-        <Text style={styles.tituloFormulario}>Planifica tus proximas vacaciones</Text>
-        <Text style={styles.descripcionFormulario}>Descubre tu destino perfecto</Text>
-        <Text style={styles.tituloFormulario}>otro campo de texto</Text>
-        {/* FORMULARIO */}
-        <Text style={styles.label}>Nombre completo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. Maria"
-          placeholderTextColor="#9E9E9E"
-          value={nombre}
-          onChangeText={setNombre}
-        />
-
-        <Text style={styles.label}>Destino</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. Cartagena"
-          placeholderTextColor="#9E9E9E"
-          value={destino}
-          onChangeText={setDestino}
-        />
-
-        <Text style={styles.label}>Tipo de Tour</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. Acuarios, Histórico..."
-          placeholderTextColor="#9E9E9E"
-          value={tipoTour}
-          onChangeText={setTour}
-        />
-
-        <Text style={styles.label}>Cantidad de Viajeros</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ej. 2"
-          placeholderTextColor="#9E9E9E"
-          value={cantidadViajeros}
-          onChangeText={setCantidadViajeros}
-          keyboardType="numeric"
-        />
-
-        {/* SWITCH ADAPTADO A SEGURO DE VIAJE */}
-        <View style={styles.filaSwitch}>
-          <View>
-            <Text style={styles.switchTitulo}>Seguro de viaje</Text>
-            <Text style={styles.switchDescripcion}>Añade cobertura médica a tu ruta</Text>
-          </View>
-                    <Switch
-            value={incluirSeguro}
-            onValueChange={setIncluirSeguro}
-          />
-        </View>
-
-        {/* BOTÓN */}
-        <Pressable style={styles.boton} onPress={realizarCompra} disabled={procesando}>
-          {procesando ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.botonTexto}>Confirmar Reserva</Text>
-          )}
-        </Pressable>
-
-        <Pressable
-        style={styles.boton}
-        onPress={() => router.push('/menu')}
-      >
-//boton menu
-        <Text style={styles.botonTexto}>
-          Ver menú completo
-        </Text>
-
-      </Pressable>
-
-// este lo pegue en clase
-      <Pressable
-        style={styles.botonSecundario}
-        onPress={() => router.push('/contacto')}
-      >
-
-        <Text style={styles.botonSecundarioTexto}>
-          Contacto
-        </Text>
-
-      </Pressable>
-
-
-
-      </ScrollView>
-
-      {/* MODAL FALTANTE AÑADIDO A LA ESTRUCTURA */}
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
-        <View style={styles.modalFondo}>
-          <View style={styles.modalCaja}>
-            <Text style={styles.modalTexto}>{resultado}</Text>
-            <Pressable style={styles.botonCerrar} onPress={() => setModalVisible(false)}>
-              <Text style={styles.botonTexto}>Cerrar</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-    </KeyboardAvoidingView>
+      <View style={styles.iconoContenedor}>
+        <Text style={styles.iconoTexto}>{icono}</Text>
+      </View>
+      <Text style={styles.botonTitulo} numberOfLines={2}>
+        {titulo}
+      </Text>
+    </Pressable>
   );
 }
 
-// 4. ESTILOS COMPLETOS AÑADIDOS
+export default function Inicio() {
+  const router = useRouter();
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* PORTADA PRINCIPAL */}
+      <View style={styles.hero}>
+        <Image
+          source={{
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrybtgTF561wAwJsipPxqrpg2iZxxNkaLsievhxa_hhdp5oZgaVHQ3dQU&s=10",
+          }}
+          style={styles.imagenHero}
+        />
+        <View style={styles.overlay}>
+          <Text style={styles.etiqueta}>
+            AGENCIA DE VIAJES
+          </Text>
+          <Text style={styles.titulo}>Viajes.com</Text>
+          <Text style={styles.subtitulo}>
+            Planea tus vacaciones ahora....
+          </Text>
+        </View>
+      </View>
+
+      {/* BIENVENIDA */}
+      <View style={styles.saludoBox}>
+        <View>
+          <Text style={styles.saludoTitulo}>
+            ¡Hola viajero!
+          </Text>
+          <Text style={styles.saludoTexto}>
+            ¿Cuál es tu proximo destino?
+          </Text>
+        </View>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarTexto}>✈️</Text>
+          <Text style={styles.avatarTexto}>🚌</Text>
+        </View>
+      </View>
+
+      {/* RESUMEN */}
+      <View style={styles.resumen}>
+        <View style={styles.resumenItem}>
+          <Text style={styles.resumenNumero}>+40</Text>
+          <Text style={styles.resumenTexto}>Destinos</Text>
+        </View>
+
+        <View style={styles.separador} />
+
+        <View style={styles.resumenItem}>
+          <Text style={styles.resumenNumero}>24/7</Text>
+          <Text style={styles.resumenTexto}>Soporte</Text>
+        </View>
+
+        <View style={styles.separador} />
+
+        <View style={styles.resumenItem}>
+          <Text style={styles.resumenNumero}>100%</Text>
+          <Text style={styles.resumenTexto}>Seguro</Text>
+        </View>
+      </View>
+
+      {/* SERVICIOS */}
+      <Text style={styles.seccionTitulo}>
+        Servicios de Viaje
+      </Text>
+
+      {/* LOS 4 BOTONES EN UNA FILA */}
+      <View style={styles.filaBotones}>
+        <BotonHorizontal
+          icono="📝"
+          titulo="Formulario"
+          colorFondo="#cf0906"
+          onPress={() => router.push("/formulario")}
+        />
+
+        <BotonHorizontal
+          icono="🏝️"
+          titulo="Galería"
+          colorFondo="#df390b"
+          onPress={() => router.push("/imagenes")}
+        />
+
+        <BotonHorizontal
+          icono="📍"
+          titulo="Contacto"
+          colorFondo="#a0270c"
+          onPress={() => router.push("/contacto")}
+        />
+
+        <BotonHorizontal
+          icono="📋"
+          titulo="Registros"
+          colorFondo="#B71C1C"
+          onPress={() => router.push("/registros" as any)}
+        />
+      </View>
+
+      {/* PIE DE PÁGINA */}
+      <Text style={styles.footer}>
+        Viajes.com · Desarrollo Móvil
+      </Text>
+    </ScrollView>
+  );
+}
+
 const styles = StyleSheet.create({
-  pantalla: {
-    flex: 1,
-    backgroundColor: '#F8F9FA',
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#F0F7FA",
+    padding: 16,
   },
-  contenido: {
-    padding: 20,
-    paddingTop: 60,
-    paddingBottom: 40,
+
+  hero: {
+    height: 250,
+    borderRadius: 22,
+    overflow: "hidden",
+    marginBottom: 16,
+    elevation: 4,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
+
+  imagenHero: {
+    width: "100%",
+    height: "100%",
   },
-  logo: {
-    fontSize: 40,
+
+  overlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 18,
+    backgroundColor: "rgba(206, 13, 13, 0.78)",
   },
+
+  etiqueta: {
+    color: "#cd2f1a",
+    fontSize: 11,
+    fontWeight: "bold",
+    letterSpacing: 1.6,
+    marginBottom: 4,
+  },
+
   titulo: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2C3E50',
+    color: "#f7f3f3",
+    fontSize: 27,
+    fontWeight: "bold",
+    marginBottom: 4,
   },
+
   subtitulo: {
-    fontSize: 16,
-    color: '#7F8C8D',
+    color: "#E1F2FB",
+    fontSize: 13,
+    lineHeight: 18,
   },
-  imagenPrincipal: {
-    width: '100%',
-    height: 200,
-    borderRadius: 15,
-    marginBottom: 20,
+
+  saludoBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+    elevation: 2,
   },
-  tituloFormulario: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2C3E50',
+
+  saludoTitulo: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#c7211b",
   },
-  descripcionFormulario: {
-    fontSize: 14,
-    color: '#7F8C8D',
-    marginBottom: 20,
+
+  saludoTexto: {
+    marginTop: 2,
+    color: "#e71e1e",
+    fontSize: 13,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#34495E',
-    marginBottom: 8,
-    marginTop: 10,
+
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#E1F1FB",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    color: '#2C3E50',
+
+  avatarTexto: {
+    fontSize: 20,
   },
-  filaSwitch: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 25,
-    marginBottom: 30,
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+
+  resumen: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    paddingVertical: 12,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: 18,
+    elevation: 2,
   },
-  switchTitulo: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2C3E50',
+
+  resumenItem: {
+    flex: 1,
+    alignItems: "center",
   },
-  switchDescripcion: {
+
+  resumenNumero: {
+    color: "#b52a0e",
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+
+  resumenTexto: {
+    color: "#b52313",
     fontSize: 12,
-    color: '#7F8C8D',
+    marginTop: 2,
+  },
+
+  separador: {
+    width: 1,
+    height: 26,
+    backgroundColor: "#DCEBF2",
+  },
+
+  seccionTitulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1B3A4B",
+    marginBottom: 12,
+  },
+
+  // CUATRO BOTONES EN UNA FILA
+  filaBotones: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+    gap: 6,
+  },
+
+  botonColumna: {
+    flex: 1,
+    height: 100,
+    borderRadius: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+
+  botonPresionado: {
+    opacity: 0.85,
+    transform: [{ scale: 0.96 }],
+  },
+
+  iconoContenedor: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: "rgba(233, 17, 17, 0.91)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+
+  iconoTexto: {
+    fontSize: 19,
+  },
+
+  botonTitulo: {
+    fontSize: 11,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+
+  // DESTACADO Y PIE
+  destacado: {
+    backgroundColor: "#E3F2FD",
+    borderRadius: 18,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 4,
   },
-  boton: {
-    backgroundColor: '#27AE60', // Verde naturaleza para la agencia
-    padding: 18,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  botonCerrar: {
-    backgroundColor: '#E74C3C',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  botonTexto: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+
+  destacadoIcono: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
 
-  botonSecundario: {
-    borderWidth: 1,
-    borderColor: '#6D4C41',
-    paddingVertical: 16,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginTop: 12,
+  destacadoEmoji: {
+    fontSize: 20,
   },
 
-  botonSecundarioTexto: {
-    color: '#6D4C41',
-    fontWeight: 'bold',
-  },
-
-
-  modalFondo: {
+  destacadoInfo: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  modalCaja: {
-    backgroundColor: 'white',
-    padding: 25,
-    borderRadius: 20,
-    width: '85%',
+
+  destacadoTitulo: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#8d0e0e",
+    marginBottom: 2,
   },
-  modalTexto: {
-    fontSize: 16,
-    color: '#2C3E50',
-    lineHeight: 24,
-  }
+
+  destacadoTexto: {
+    color: "#d41d1d",
+    fontSize: 12,
+    lineHeight: 16,
+  },
+
+  footer: {
+    textAlign: "center",
+    color: "#e31e0f",
+    fontSize: 12,
+    marginTop: 20,
+    marginBottom: 8,
+  },
 });
-
-//     <View style={styles.container}>
-//       <Text style={styles.titulo}>
-//         Desarrollo movil
-//       </Text>
-
-//       <Text style={styles.texto}>
-//          Mi primera app
-//       </Text>
-
-//       <Text style={styles.texto}>
-//         Ingenieria sistemas
-//       </Text>
-//       <Text style={styles.mensaje}>
-//         Hola React-Native
-//       </Text>
-
-//       <Image source={{
-//         uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrybtgTF561wAwJsipPxqrpg2iZxxNkaLsievhxa_hhdp5oZgaVHQ3dQU&s=10'
-//       }}
-//       style= {styles.imagen}
-//       ></Image>
-
-//       <Pressable style={styles.botonVamos}>
-//         <Text style={styles.textoBoton}>
-//           Vamos!
-//         </Text>
-//       </Pressable>
-
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-
-//   titulo: {
-//     fontSize: 30,
-//     fontWeight: 'bold',
-//   },
-
-//   texto: {
-//     fontSize: 18,
-//     marginTop: 10,
-//   },
-
-//   mensaje: {
-//     fontSize: 18,
-//     marginTop: 30,
-  
-// },
-
-// imagen:{
-//   width: 300, //ancho
-//   height: 300, //alt
-// },
-
-// botonVamos: {
-//     backgroundColor: '#007AFF', 
-//     width: 100,
-//     height: 100, 
-//     justifyContent: 'center', 
-//     alignItems: 'center', 
-//     marginTop: 30,
-//   },
-//   textoBoton: {
-//     color: 'white',
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//   }
-// });
