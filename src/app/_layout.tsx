@@ -1,50 +1,35 @@
 import { Stack } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { AuthProvider, useAuth } from "../context/Authcontext";
 
-export default function Layout() {
+function RootNavigator() {
+  const { session, cargando } = useAuth();
+
+  if (cargando) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#c71139" />
+      </View>
+    );
+  }
+
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: "#C96A8B",
-        },
-        headerTintColor: "#ffffff",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-        contentStyle: {
-          backgroundColor: "#FFF7FA",
-        },
-      }}
-    >
-      <Stack.Screen
-        name="index"
-        options={{ title: "Inicio" }}
-      />
-
-      <Stack.Screen
-        name="formulario"
-        options={{ title: "Formulario" }}
-      />
-
-      <Stack.Screen
-        name="resultado"
-        options={{ title: "Datos registrados" }}
-      />
-
-      <Stack.Screen
-        name="imagenes"
-        options={{ title: "Galería" }}
-      />
-
-      <Stack.Screen
-        name="contacto"
-        options={{ title: "Contacto" }}
-      />
-
-      <Stack.Screen
-        name="registros"
-        options={{ title: "Registros de viajeros" }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* Si no hay sesión, muestra el grupo de autenticación */}
+      {!session ? (
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+      ) : (
+        /* Si hay sesión, muestra el grupo principal */
+        <Stack.Screen name="app" options={{ headerShown: false }} />
+      )}
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
   );
 }

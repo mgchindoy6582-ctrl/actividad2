@@ -1,7 +1,7 @@
 import {
-    StyleSheet,
-    Text,
-    View,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 export default function Contacto() {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#6C4051",
+    color: "#c20e44",
   },
 
   subtitulo: {
@@ -63,13 +63,13 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: "#A06C80",
+    color: "#c20e44",
     fontSize: 13,
     marginTop: 8,
   },
 
   valor: {
-    color: "#563C46",
+    color: "#c20e44",
     fontSize: 17,
     fontWeight: "600",
     marginBottom: 8,

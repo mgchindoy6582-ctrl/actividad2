@@ -12,7 +12,8 @@ import {
   View,
 } from "react-native";
 
-import { supabase } from "../lib/supabase";
+//import { supabase } from "../lib/supabase";//
+import { supabase } from "../../lib/supabase";
 
 export default function FormularioViaje() {
   const router = useRouter();
@@ -163,7 +164,8 @@ export default function FormularioViaje() {
         <TextInput
           style={styles.input}
           placeholder="Ej: Maria Chindoy"
-          placeholderTextColor="#8C9CAE"
+          placeholderTextColor="#e82171"
+          
           value={nombre}
           onChangeText={setNombre}
           autoCapitalize="words"
@@ -174,7 +176,8 @@ export default function FormularioViaje() {
         <TextInput
           style={styles.input}
           placeholder="Ej: maria@correo.com"
-          placeholderTextColor="#8C9CAE"
+          placeholderTextColor="#e82171"
+      
           value={correo}
           onChangeText={setCorreo}
           keyboardType="email-address"
@@ -186,7 +189,8 @@ export default function FormularioViaje() {
         <TextInput
           style={styles.input}
           placeholder="Ej: 3001234567"
-          placeholderTextColor="#8C9CAE"
+          placeholderTextColor="#e82171"
+          
           value={telefono}
           onChangeText={setTelefono}
           keyboardType="phone-pad"
@@ -198,7 +202,7 @@ export default function FormularioViaje() {
         <TextInput
           style={styles.input}
           placeholder="Ej: Pasto, Bogotá, Cali..."
-          placeholderTextColor="#8C9CAE"
+          placeholderTextColor="#e82171"
           value={ciudad}
           onChangeText={setCiudad}
           autoCapitalize="words"
@@ -209,7 +213,8 @@ export default function FormularioViaje() {
         <TextInput
           style={styles.input}
           placeholder="Ej: San Andrés, Cancún, Roma..."
-          placeholderTextColor="#8C9CAE"
+          placeholderTextColor="#e82171"
+        
           value={destino}
           onChangeText={setDestino}
           autoCapitalize="words"
@@ -329,13 +334,13 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#163A5F",
+    color: "#c41f2f",
     textAlign: "center",
   },
 
   subtitulo: {
     fontSize: 14,
-    color: "#526B84",
+    color: "#db2d6d",
     textAlign: "center",
     marginTop: 7,
     lineHeight: 21,
@@ -347,9 +352,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "#D2E2F0",
+    borderColor: "#fc85a3",
     elevation: 4,
-    shadowColor: "#163A5F",
+    shadowColor: "#820404",
     shadowOpacity: 0.08,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
@@ -358,33 +363,33 @@ const styles = StyleSheet.create({
   cardTitulo: {
     fontSize: 19,
     fontWeight: "bold",
-    color: "#163A5F",
+    color: "#cc1208",
     marginBottom: 4,
   },
 
   cardDescripcion: {
-    color: "#627B94",
+    color: "#dc1010",
     fontSize: 13,
     lineHeight: 19,
     marginBottom: 20,
   },
 
   label: {
-    color: "#1E4773",
+    color: "#9c2111",
     fontWeight: "600",
     fontSize: 14,
     marginBottom: 7,
   },
 
   input: {
-    backgroundColor: "#F8FAFD",
+    backgroundColor: "#f9e4e9",
     borderWidth: 1,
-    borderColor: "#CBDCEB",
+    borderColor: "#ebcbd2",
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 13,
     marginBottom: 17,
-    color: "#163A5F",
+    color: "#f43753",
     fontSize: 15,
   },
 
@@ -398,7 +403,7 @@ const styles = StyleSheet.create({
   opcion: {
     backgroundColor: "#F8FAFD",
     borderWidth: 1,
-    borderColor: "#CBDCEB",
+    borderColor: "#e37d87",
     borderRadius: 12,
     paddingVertical: 11,
     paddingHorizontal: 14,
@@ -406,21 +411,21 @@ const styles = StyleSheet.create({
 
   opcionSeleccionada: {
     backgroundColor: "#DCE9F6",
-    borderColor: "#0284C7",
+    borderColor: "#a00a0a",
   },
 
   opcionTexto: {
-    color: "#526B84",
+    color: "#c10b0b",
     fontSize: 14,
     fontWeight: "600",
   },
 
   opcionTextoSeleccionada: {
-    color: "#163A5F",
+    color: "#121212",
   },
 
   boton: {
-    backgroundColor: "#0284C7",
+    backgroundColor: "#f73f3f",
     paddingVertical: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -430,7 +435,7 @@ const styles = StyleSheet.create({
 
   botonPresionado: {
     opacity: 0.85,
-    backgroundColor: "#0369A1",
+    backgroundColor: "#a10303",
   },
 
   botonDesactivado: {
@@ -450,7 +455,7 @@ const styles = StyleSheet.create({
   },
 
   infoBox: {
-    backgroundColor: "#E2EEF9",
+    backgroundColor: "#e9abb9",
     padding: 17,
     borderRadius: 20,
     marginTop: 20,
@@ -477,21 +482,21 @@ const styles = StyleSheet.create({
   },
 
   infoTitulo: {
-    color: "#163A5F",
+    color: "#c60404",
     fontWeight: "bold",
     fontSize: 15,
     marginBottom: 3,
   },
 
   infoTexto: {
-    color: "#47617B",
+    color: "#ee0a0a",
     fontSize: 13,
     lineHeight: 18,
   },
 
   footer: {
     textAlign: "center",
-    color: "#839BB3",
+    color: "#e97d7d",
     fontSize: 12,
     marginTop: 24,
     marginBottom: 10,

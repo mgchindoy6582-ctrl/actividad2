@@ -8,8 +8,9 @@ import {
   Text,
   View,
 } from "react-native";
-import { supabase } from "../lib/supabase";
 
+//import { supabase } from "../lib/supabase";//
+import { supabase } from "../../lib/supabase";
 type Cliente = {
   id: number;
   nombre: string;
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
 
   descripcion: {
     fontSize: 14,
-    color: "#795555",
+    color: "#e95757",
     textAlign: "center",
     marginTop: 8,
     lineHeight: 21,
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#F5B5B5",
+    borderColor: "#aa5757",
   },
 
   resumenNumero: {
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
   },
 
   mensaje: {
-    color: "#795555",
+    color: "#d77388",
     textAlign: "center",
     marginTop: 10,
     lineHeight: 21,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
 
   ciudad: {
     fontSize: 13,
-    color: "#795555",
+    color: "#f23346",
     marginTop: 4,
   },
 

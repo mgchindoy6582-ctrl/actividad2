@@ -64,7 +64,7 @@ export default function Resultado() {
 
       <Pressable
         style={styles.boton}
-        onPress={() => router.replace("/")}
+        onPress={() => router.replace("./")}
       >
         <Text style={styles.botonTexto}>
           Volver al inicio
@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 27,
     fontWeight: "bold",
-    color: "#6C4051",
+    color: "#bd1a43",
     textAlign: "center",
   },
 
   subtitulo: {
-    color: "#8A727C",
+    color: "#b4124d",
     textAlign: "center",
     marginTop: 6,
     marginBottom: 20,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   cardTitulo: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#6C4051",
+    color: "#eb072d",
     marginBottom: 12,
   },
 
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
 
   valor: {
-    color: "#563C46",
+    color: "#d91035",
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 5,
@@ -143,14 +143,14 @@ const styles = StyleSheet.create({
   },
 
   mensaje: {
-    color: "#8A727C",
+    color: "#b41d5c",
     textAlign: "center",
     fontSize: 13,
     marginBottom: 16,
   },
 
   boton: {
-    backgroundColor: "#C96A8B",
+    backgroundColor: "#dc0b54",
     padding: 14,
     borderRadius: 13,
     alignItems: "center",

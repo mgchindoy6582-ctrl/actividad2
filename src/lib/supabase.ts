@@ -1,16 +1,18 @@
-import { createClient } from "@supabase/supabase-js"; // esta es una funcion que crea el cliente de conexion a supabase
-import "react-native-url-polyfill/auto"; //agrega al react native funciones para procesar direcciones url
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createClient } from "@supabase/supabase-js";
+import "react-native-url-polyfill/auto";
 
-const supabaseUrl = "https://jwvkrzlejtlqxuatyfxi.supabase.co";   //aqui trauemos la url de nuestra base de datos
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3dmtyemxlanRscXh1YXR5ZnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMTI3MDksImV4cCI6MjEwNTU4ODcwOX0.08bhGrAr9qYaTNEnRlSlaQC5HJ9b_aoeesKInkRMk5s" ;   // aqui taremos la url de supabase
+const supabaseUrl = "https://jwvkrzlejtlqxuatyfxi.supabase.co"; 
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3dmtyemxlanRscXh1YXR5ZnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwMTI3MDksImV4cCI6MjEwNTU4ODcwOX0.08bhGrAr9qYaTNEnRlSlaQC5HJ9b_aoeesKInkRMk5s"; 
 
 export const supabase = createClient(
   supabaseUrl,
   supabaseAnonKey,
   {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
+      storage: AsyncStorage,
+      persistSession: true,      // <--- Cambiado a true para que guarde la sesión
+      autoRefreshToken: true,    // <--- Cambiado a true para refrescar el token
       detectSessionInUrl: false,
     },
   }

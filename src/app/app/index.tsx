@@ -1,4 +1,3 @@
-
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -8,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { supabase } from "../../lib/supabase";
 
 function BotonHorizontal({
   icono,
@@ -41,6 +41,15 @@ function BotonHorizontal({
 
 export default function Inicio() {
   const router = useRouter();
+
+  // Función para cerrar sesión (Paso 12.2)
+  const cerrarSesion = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      alert(error.message);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -112,30 +121,38 @@ export default function Inicio() {
           icono="📝"
           titulo="Formulario"
           colorFondo="#cf0906"
-          onPress={() => router.push("/formulario")}
+          onPress={() => router.push("../app/formulario")}
         />
 
         <BotonHorizontal
           icono="🏝️"
           titulo="Galería"
           colorFondo="#df390b"
-          onPress={() => router.push("/imagenes")}
+          onPress={() => router.push("../app/imagenes")}
         />
 
         <BotonHorizontal
           icono="📍"
           titulo="Contacto"
           colorFondo="#a0270c"
-          onPress={() => router.push("/contacto")}
+          onPress={() => router.push("../app/contacto")}
         />
 
         <BotonHorizontal
           icono="📋"
           titulo="Registros"
           colorFondo="#B71C1C"
-          onPress={() => router.push("/registros" as any)}
+          onPress={() => router.push("../app/registros" as any)}
         />
       </View>
+
+      {/* BOTÓN DE CERRAR SESIÓN (Paso 12.3) */}
+      <Pressable
+        style={styles.botonCerrar}
+        onPress={cerrarSesion}
+      >
+        <Text style={styles.textoCerrar}>Cerrar sesión</Text>
+      </Pressable>
 
       {/* PIE DE PÁGINA */}
       <Text style={styles.footer}>
@@ -268,7 +285,7 @@ const styles = StyleSheet.create({
   seccionTitulo: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1B3A4B",
+    color: "#8d2333",
     marginBottom: 12,
   },
 
@@ -321,45 +338,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // DESTACADO Y PIE
-  destacado: {
-    backgroundColor: "#E3F2FD",
-    borderRadius: 18,
+  // ESTILOS PARA EL BOTÓN CERRAR SESIÓN (Paso 12.4)
+  botonCerrar: {
+    backgroundColor: "#8E3B46",
     padding: 14,
-    flexDirection: "row",
+    borderRadius: 14,
     alignItems: "center",
-    marginTop: 4,
+    marginTop: 20,
   },
-
-  destacadoIcono: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-
-  destacadoEmoji: {
-    fontSize: 20,
-  },
-
-  destacadoInfo: {
-    flex: 1,
-  },
-
-  destacadoTitulo: {
-    fontSize: 14,
+  textoCerrar: {
+    color: "#FFFFFF",
     fontWeight: "bold",
-    color: "#8d0e0e",
-    marginBottom: 2,
-  },
-
-  destacadoTexto: {
-    color: "#d41d1d",
-    fontSize: 12,
-    lineHeight: 16,
   },
 
   footer: {
