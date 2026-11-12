@@ -21,7 +21,7 @@ export default function Login() {
     try {
       setCargando(true);
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: correo.trim(),
         password,
       });
@@ -31,9 +31,20 @@ export default function Login() {
         return;
       }
 
-      // El enrutador raíz (RootLayout) detectará la sesión automáticamente y cambiará de pantalla.
-    } catch (e: any) {
-      Alert.alert("Error", e.message);
+      if (!data.session) {
+        Alert.alert(
+          "Inicio de sesión",
+          "No se recibió una sesión. Verifique sus datos e inténtelo de nuevo."
+        );
+        return;
+      }
+
+      router.replace("/app");
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "No fue posible iniciar sesión"
+      );
     } finally {
       setCargando(false);
     }

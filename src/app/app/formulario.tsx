@@ -2,14 +2,14 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 //import { supabase } from "../lib/supabase";//
@@ -101,7 +101,7 @@ export default function FormularioViaje() {
 
       // Enviar los datos a resultado.tsx
       router.push({
-        pathname: "/resultado",
+        pathname: "./resultado",
         params: {
           id: String(registro.id),
           nombre: registro.nombre,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   opcion: {
     backgroundColor: "#F8FAFD",
     borderWidth: 1,
-    borderColor: "#e37d87",
+    borderColor: "#d86e78",
     borderRadius: 12,
     paddingVertical: 11,
     paddingHorizontal: 14,

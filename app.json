@@ -7,6 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "miprimeraapp",
     "userInterfaceStyle": "automatic",
+    "updates": {
+      "enabled": false
+    },
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -42,7 +45,9 @@
       "reactCompiler": true
     },
     "extra": {
-      "router": {},
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "af3de0a2-c24c-40b3-91b6-6bbb9bddef88"
       }

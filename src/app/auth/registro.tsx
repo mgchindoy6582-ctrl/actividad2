@@ -37,10 +37,23 @@ export default function Registro() {
       }
 
       // Para practicar el login, cerramos la sesión creada por signUp.
-      await supabase.auth.signOut();
+      const { error: signOutError } = await supabase.auth.signOut();
+
+      if (signOutError) {
+        Alert.alert(
+          "Cuenta creada",
+          `No fue posible cerrar la sesión: ${signOutError.message}`
+        );
+        return;
+      }
 
       Alert.alert("Cuenta creada", "Ahora puede iniciar sesión");
       router.replace("./login");
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "No fue posible crear la cuenta"
+      );
     } finally {
       setGuardando(false);
     }

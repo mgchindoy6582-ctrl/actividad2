@@ -26,28 +26,75 @@ export default function Registros() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
+  const consultarRegistros = useCallback(() => {
+    return supabase
+      .from("clientes_agencia")
+      .select("*")
+      .order("id", { ascending: false });
+  }, []);
+
   const cargarRegistros = useCallback(async () => {
     setCargando(true);
     setError("");
 
-    const { data, error } = await supabase
-      .from("clientes_agencia")
-      .select("*")
-      .order("id", { ascending: false });
+    try {
+      const { data, error } = await consultarRegistros();
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+        setClientes([]);
+      } else {
+        setClientes((data || []) as Cliente[]);
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "No fue posible cargar los registros"
+      );
       setClientes([]);
-    } else {
-      setClientes((data || []) as Cliente[]);
+    } finally {
+      setCargando(false);
     }
-
-    setCargando(false);
-  }, []);
+  }, [consultarRegistros]);
 
   useEffect(() => {
-    cargarRegistros();
-  }, [cargarRegistros]);
+    let activo = true;
+
+    const cargarInicial = async () => {
+      try {
+        const { data, error } = await consultarRegistros();
+
+        if (!activo) {
+          return;
+        }
+
+        if (error) {
+          setError(error.message);
+          setClientes([]);
+        } else {
+          setClientes((data || []) as Cliente[]);
+        }
+      } catch (error) {
+        if (!activo) {
+          return;
+        }
+
+        setError(
+          error instanceof Error ? error.message : "No fue posible cargar los registros"
+        );
+        setClientes([]);
+      } finally {
+        if (activo) {
+          setCargando(false);
+        }
+      }
+    };
+
+    void cargarInicial();
+
+    return () => {
+      activo = false;
+    };
+  }, [consultarRegistros]);
 
   return (
     <ScrollView

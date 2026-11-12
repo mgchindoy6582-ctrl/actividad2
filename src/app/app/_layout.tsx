@@ -14,7 +14,11 @@ export default function AppLayout() {
       <Stack.Screen name="resultado" options={{ title: "Resultado" }} />
       <Stack.Screen name="registros" options={{ title: "Coffee Lovers" }} />
       <Stack.Screen name="imagenes" options={{ title: "Imágenes" }} />
-      <Stack.Screen name="contacto" options={{ title: "Contacto" }} />
+     
+      <Stack.Screen name="catalogo" options={{ title: "Catálogo" }} />
+      <Stack.Screen name="detalle" options={{ title: "detalle" }} />
+      <Stack.Screen name="escanear" options={{ title: "Escanear" }} />
+
     </Stack>
   );
 }
